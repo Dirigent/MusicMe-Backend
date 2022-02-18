@@ -1,0 +1,16 @@
+{
+  "scriptFile" : "../MusicMeUserFunctions-1.0-SNAPSHOT.jar",
+  "entryPoint" : "com.musicmeuserfunctions.UserUpdator.run",
+  "bindings" : [ {
+    "type" : "httpTrigger",
+    "direction" : "in",
+    "name" : "req",
+    "route" : "users/group-id/{groupId}/user-id/{userId}",
+    "methods" : [ "PUT" ],
+    "authLevel" : "ANONYMOUS"
+  }, {
+    "type" : "http",
+    "direction" : "out",
+    "name" : "$return"
+  } ]
+}

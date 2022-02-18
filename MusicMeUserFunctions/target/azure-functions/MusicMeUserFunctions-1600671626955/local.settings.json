@@ -1,0 +1,8 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "",
+    "FUNCTIONS_WORKER_RUNTIME": "java",
+    "connectionString": "AccountEndpoint=https://musicmedatabase.documents.azure.com:443/;AccountKey=wqjLABx1ZMEvDAnESJjuC994k61qF6tCFQ74lDbo6Vdo7vIlzhXK9boq9BPoJp3WQegSbRAsD1N9cZh21jGFpA==;"
+  }
+}

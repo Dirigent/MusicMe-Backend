@@ -1,0 +1,23 @@
+{
+  "scriptFile" : "../MusicMeUserFunctions-1.0-SNAPSHOT.jar",
+  "entryPoint" : "com.musicmeuserfunctions.UserCreator.run",
+  "bindings" : [ {
+    "type" : "httpTrigger",
+    "direction" : "in",
+    "name" : "req",
+    "route" : "users",
+    "methods" : [ "POST" ],
+    "authLevel" : "ANONYMOUS"
+  }, {
+    "type" : "cosmosDB",
+    "direction" : "out",
+    "name" : "database",
+    "databaseName" : "Songs",
+    "connectionStringSetting" : "AccountEndpoint=https://musicmedatabase.documents.azure.com:443/;AccountKey=wqjLABx1ZMEvDAnESJjuC994k61qF6tCFQ74lDbo6Vdo7vIlzhXK9boq9BPoJp3WQegSbRAsD1N9cZh21jGFpA==;",
+    "collectionName" : "Users"
+  }, {
+    "type" : "http",
+    "direction" : "out",
+    "name" : "$return"
+  } ]
+}
