@@ -1,7 +1,0 @@
-{
-    "azureFunctions.deploySubpath": "target/azure-functions/musicme.marathon.functions-1595873715979",
-    "azureFunctions.projectLanguage": "Java",
-    "azureFunctions.projectRuntime": "~3",
-    "debug.internalConsoleOptions": "neverOpen",
-    "azureFunctions.preDeployTask": "package"
-}

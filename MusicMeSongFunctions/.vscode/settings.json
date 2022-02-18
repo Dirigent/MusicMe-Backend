@@ -1,9 +1,0 @@
-{
-  "azureFunctions.deploySubpath": "target/azure-functions/MusicMeSongFunctions-1600616920702",
-  "azureFunctions.projectLanguage": "Java",
-  "azureFunctions.projectRuntime": "~3",
-  "debug.internalConsoleOptions": "neverOpen",
-  "azureFunctions.preDeployTask": "package",
-  "git.ignoreLimitWarning": true,
-  "java.configuration.updateBuildConfiguration": "automatic"
-}
