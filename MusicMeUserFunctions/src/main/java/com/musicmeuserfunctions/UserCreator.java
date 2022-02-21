@@ -23,6 +23,7 @@ import java.util.Random;
 public class UserCreator {
     Random random = new Random();
 
+    //Parts of the code are used under Creative Commons License from https://github.com/MicrosoftDocs/azure-docs
     @FunctionName("UserCreator")
     public HttpResponseMessage run(@HttpTrigger(name = "req", methods = {
             HttpMethod.POST }, authLevel = AuthorizationLevel.ANONYMOUS, route = 

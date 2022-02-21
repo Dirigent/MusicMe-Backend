@@ -1,9 +1,6 @@
 package com.function;
 
-import com.azure.cosmos.ConsistencyLevel;
-import com.azure.cosmos.CosmosAsyncClient;
 import com.azure.cosmos.CosmosClient;
-import com.azure.cosmos.CosmosClientBuilder;
 import com.azure.cosmos.CosmosContainer;
 import com.azure.cosmos.CosmosDatabase;
 import com.azure.cosmos.implementation.Utils;
@@ -20,7 +17,6 @@ import com.microsoft.azure.functions.HttpRequestMessage;
 import com.microsoft.azure.functions.HttpResponseMessage;
 import com.microsoft.azure.functions.HttpStatus;
 import com.microsoft.azure.functions.annotation.AuthorizationLevel;
-import com.microsoft.azure.functions.annotation.BindingName;
 import com.microsoft.azure.functions.annotation.FunctionName;
 import com.microsoft.azure.functions.annotation.HttpTrigger;
 
@@ -30,20 +26,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
-import java.util.Set;
-
-import javax.swing.text.html.HTMLDocument.HTMLReader.ParagraphAction;
 
 
-public class JustATest {
+public class SongRetriever {
         CosmosClient client = ClientSingleton.getInstance().getClient();
         CosmosDatabase cosmosDatabase = client.getDatabase("Songs");
         CosmosContainer container = cosmosDatabase.getContainer("songs");
         Random rand = new Random();
 
 
-    @FunctionName("test")
-    public HttpResponseMessage run(@HttpTrigger(name = "test",
+    @FunctionName("SongRetriever")
+    public HttpResponseMessage run(@HttpTrigger(name = "SongRetriever",
      methods = {HttpMethod.GET },
          authLevel = AuthorizationLevel.ANONYMOUS)
          HttpRequestMessage<Optional<String>> request,

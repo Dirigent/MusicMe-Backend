@@ -1,7 +1,6 @@
 package com.musicmeuserfunctions;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -31,7 +30,8 @@ public class UserUpdator {
     private CosmosDatabase cosmosDatabase = client.getDatabase("Songs");
     private CosmosContainer container = cosmosDatabase.getContainer("Users");
     ObjectMapper mapper = new ObjectMapper();
-
+    
+    //Parts of the code are used under Creative Commons License from https://github.com/MicrosoftDocs/azure-docs
     @FunctionName("UserUpdator")
     public HttpResponseMessage run(@HttpTrigger(name = "req", methods = {
             HttpMethod.PUT }, authLevel = AuthorizationLevel.ANONYMOUS, route = "users/group-id/{groupId}/user-id/{userId}") HttpRequestMessage<Optional<String>> request,

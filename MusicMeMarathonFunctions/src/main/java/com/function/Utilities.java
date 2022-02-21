@@ -21,7 +21,6 @@ public class Utilities{
         if(0 > offset){
         	offset = 0;
         }
-        int ranFactor = rand.nextInt(count/10);
 
         offset = randomInt(rand.nextInt(3), rand.nextInt(1+(count/15)), offset);
 

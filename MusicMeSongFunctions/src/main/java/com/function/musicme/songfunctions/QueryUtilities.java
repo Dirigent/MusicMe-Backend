@@ -13,25 +13,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class QueryUtilities {
-    //Constatn Strings
+    //Prepared statements
     public static final String ASC_QUERY = "SELECT DISTINCT {\"name\": c.name, \"artist\": c.artist} AS song FROM c ORDER BY c.pi ASC OFFSET @offset LIMIT @limit";
     public static final String DESC_QUERY = "SELECT DISTINCT {\"name\": c.name , \"artist\": c.artist} AS song FROM c ORDER BY c.pi DESC OFFSET @offset LIMIT @limit";
-
     public static final String BASE_READ_QUERY = "SELECT DISTINCT {\"name\": c.name , \"artist\": c.artist} AS song FROM c";
     public static final String DESC_ENDING = " ORDER BY c.pi DESC OFFSET @offset LIMIT @limit";
     public static final String ASC_ENDING = " ORDER BY c.pi ASC OFFSET @offset LIMIT @limit";
     public static final String QUERY_START = " c.";
     public static final String QUERY_START_TIME = " c.time.";
-    public static final String QUERY_PARRAM_ARTIST = "artist";
-    public static final String QUERY_PARRAM_DECADE = "decade";
-    public static final String QUERY_PARRAM_CENTURY = "century";
-    public static final String QUERY_PARRAM_YEAR = "year";
-    public static final String QUERY_PARRAM_GENDER = "gender";
-    public static final String QUERY_PARRAM_AUDIENCE = "audience";
-    public static final String QUERY_PARRAM_STAGE = "stage";
-    public static final String QUERY_PARRAM_LIMIT = "limit";
+    public static final String QUERY_PARAM_ARTIST = "artist";
+    public static final String QUERY_PARAM_DECADE = "decade";
+    public static final String QUERY_PARAM_CENTURY = "century";
+    public static final String QUERY_PARAM_YEAR = "year";
+    public static final String QUERY_PARAM_GENDER = "gender";
+    public static final String QUERY_PARAM_AUDIENCE = "audience";
+    public static final String QUERY_PARAM_STAGE = "stage";
+    public static final String QUERY_PARAM_LIMIT = "limit";
 
-
+    //Parts of the code are used under the MIT license from https://github.com/Azure-Samples/azure-cosmos-java-sql-api-samples
 
     //Queries a collectionn and processes the response to a List
     public static List<JsonNode> queryCollection(SqlQuerySpec querySpec, CosmosContainer container, CosmosQueryRequestOptions requestOptions){

@@ -4,10 +4,6 @@ import com.azure.cosmos.ConsistencyLevel;
 import com.azure.cosmos.CosmosClient;
 import com.azure.cosmos.CosmosClientBuilder;
 
-
-
-
-
 public final class ClientSingleton {
 
     private static volatile ClientSingleton INSTANCE = null;
@@ -16,9 +12,6 @@ public final class ClientSingleton {
     private int count = 0;
 
     public static ClientSingleton getInstance(){
-
-
-        
         if (INSTANCE  == null){
             synchronized (ClientSingleton.class){
                 if (INSTANCE == null){
@@ -28,8 +21,6 @@ public final class ClientSingleton {
             }
         }
         return INSTANCE;
-        
-
     }
 
     public int getCount(){

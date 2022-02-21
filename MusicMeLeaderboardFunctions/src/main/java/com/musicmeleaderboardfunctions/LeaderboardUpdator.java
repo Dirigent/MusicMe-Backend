@@ -30,7 +30,7 @@ public class LeaderboardUpdator {
     private ObjectMapper mapper = new ObjectMapper();
 
 
-
+//Parts of the code are used under Creative Commons License from MicrosoftDocs
 @FunctionName("leaderboardUpdator")
 public HttpResponseMessage run(@HttpTrigger(name = "levelReq",
  methods = {
@@ -56,19 +56,19 @@ public HttpResponseMessage run(@HttpTrigger(name = "levelReq",
 
             UserScoreChangeBundle bundle = sortScore(userScore, currentScores);
             Leaderboard leaderboard = new Leaderboard(type, bundle.getScores());
-            CosmosItemResponse something = null;
             if(bundle.getChanged()){
-                    something = container.replaceItem(leaderboard, type, new PartitionKey(type), options);
-                    //Cosmos DB generates garbage this is done to generate proper response with relevant information only
-                    Leaderboard leaderboard2 = new Leaderboard(type, bundle.getScores());
-                    try {
-                        response = mapper.writeValueAsString(leaderboard2);
-                        return request.createResponseBuilder(HttpStatus.OK).body(response).build();
-                    } catch (JsonProcessingException e) {
-                            e.printStackTrace();
-                            return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body("Bad Request " + HttpStatus.BAD_REQUEST.value()).build();
+                CosmosItemResponse something = container.replaceItem(leaderboard, type, new PartitionKey(type), options);
+                
+                //Cosmos DB generates garbage this is done to generate proper response with relevant information only
+                Leaderboard leaderboard2 = new Leaderboard(type, bundle.getScores());
+                try {
+                    response = mapper.writeValueAsString(leaderboard2);
+                    return request.createResponseBuilder(HttpStatus.OK).body(response).build();
+                } catch (JsonProcessingException e) {
+                        e.printStackTrace();
+                        return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body("Bad Request " + HttpStatus.BAD_REQUEST.value()).build();
 
-                    }
+                }
             } else {
 
                 try {
@@ -101,6 +101,7 @@ public HttpResponseMessage run(@HttpTrigger(name = "levelReq",
             }
         return new UserScoreChangeBundle(changed, list);
     }
+
     //determines if the user already has an entry in the list
     private UserScoreChangeBundle sortScore(UserScore userScore, List<UserScore> list){
 

@@ -29,6 +29,8 @@ public class ArtistSearch {
     CosmosClient client = ClientSingleton.getInstance().getClient();
     CosmosDatabase cosmosDatabase = client.getDatabase("Songs");
     
+
+    //Parts of the code are used under Creative Commons License from https://github.com/MicrosoftDocs/azure-docs
     @FunctionName("ArtistSearch")
     public HttpResponseMessage run2(
         @HttpTrigger(name = "artistSearch",

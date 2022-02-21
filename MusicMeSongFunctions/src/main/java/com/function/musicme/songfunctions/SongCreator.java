@@ -17,7 +17,8 @@ import java.util.Optional;
 
 public class SongCreator {
 
-    //Creates a new document if 
+    
+    //Parts of the code used under MIT license from https://github.com/Azure-Samples/azure-cosmos-java-sql-api-samples 
     @FunctionName("SongCreator")
     public HttpResponseMessage run(@HttpTrigger(name = "req", methods = { HttpMethod.POST}, authLevel = AuthorizationLevel.ADMIN, route = "songs") HttpRequestMessage<Optional<String>> request,
             @CosmosDBOutput(name = "database",

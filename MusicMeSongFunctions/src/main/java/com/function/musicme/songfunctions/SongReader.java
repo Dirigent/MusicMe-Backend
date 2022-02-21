@@ -66,8 +66,8 @@ public class SongReader {
                     params.remove("genre");
                 }
 
-                stage = this.removeParam(params, QueryUtilities.QUERY_PARRAM_STAGE, stage);
-                limit = this.removeParam(params, QueryUtilities.QUERY_PARRAM_LIMIT, limit);
+                stage = this.removeParam(params, QueryUtilities.QUERY_PARAM_STAGE, stage);
+                limit = this.removeParam(params, QueryUtilities.QUERY_PARAM_LIMIT, limit);
     
                 SqlQuerySpec specs = this.buildQuery(params);
                 int count = QueryUtilities.getCount(queryRequestOptions, container, specs);
@@ -119,19 +119,19 @@ public class SongReader {
         Object[] keys = params.keySet().toArray();
         for(int i = 0; i < params.size(); i++){
             String parameter = (String) keys[i];
-            if(parameter.equals(QueryUtilities.QUERY_PARRAM_ARTIST)){
+            if(parameter.equals(QueryUtilities.QUERY_PARAM_ARTIST)){
                 query += queryOperators(i)+ QueryUtilities.QUERY_START +  parameter + " = @" + parameter;
                 parameters.add(new SqlParameter("@"+parameter, params.get(parameter)));
-            } else if (parameter.equals(QueryUtilities.QUERY_PARRAM_DECADE) || parameter.equals(QueryUtilities.QUERY_PARRAM_CENTURY)){
+            } else if (parameter.equals(QueryUtilities.QUERY_PARAM_DECADE) || parameter.equals(QueryUtilities.QUERY_PARAM_CENTURY)){
                 query += queryOperators(i)+ QueryUtilities.QUERY_START_TIME +  parameter + " = @" + parameter;
                 parameters.add(new SqlParameter("@"+parameter, params.get(parameter)));
-            } else if (parameter.equals(QueryUtilities.QUERY_PARRAM_YEAR)){
+            } else if (parameter.equals(QueryUtilities.QUERY_PARAM_YEAR)){
                 query += queryOperators(i)+QueryUtilities.QUERY_START_TIME +  parameter + " = @" + parameter;
                 parameters.add(new SqlParameter("@"+parameter, Integer.parseInt(params.get(parameter))));
-            } else if (parameter.equals(QueryUtilities.QUERY_PARRAM_GENDER)){
+            } else if (parameter.equals(QueryUtilities.QUERY_PARAM_GENDER)){
                 query += queryOperators(i)+QueryUtilities.QUERY_START +  parameter + " = @" + parameter;
                 parameters.add(new SqlParameter("@"+parameter, params.get(parameter)));
-            } else if (parameter.equals(QueryUtilities.QUERY_PARRAM_AUDIENCE)){
+            } else if (parameter.equals(QueryUtilities.QUERY_PARAM_AUDIENCE)){
                 query += queryOperators(i)+QueryUtilities.QUERY_START +  parameter + " = @" + parameter;
                 parameters.add(new SqlParameter("@"+parameter, params.get(parameter)));
             } 

@@ -7,24 +7,24 @@ public class Utilities {
 
     //Calculates offset of songs in descending order
     public static int calculateOffset(int stage, int count, int limit) {
-        Random rand = new Random();
+        Random random = new Random();
         int offset = stage * 10;
 
-        offset = randomInt(rand.nextInt(3), rand.nextInt(1+(count/15)), offset);
+        offset = randomInt(random.nextInt(3), random.nextInt(1+(count/15)), offset);
  
 
         return Math.abs(offset);
     }
     //Calculates offset of songs in ascending order
     public static  int calculateOppositeOffset(int stage, int count, int limit) {
-        Random rand = new Random();
+        Random random = new Random();
 
         int offset = count - limit - (stage * 10);
         if(0 > offset){
         	offset = 0;
         }
 
-        offset = randomInt(rand.nextInt(3), rand.nextInt(1+(count/15)), offset);
+        offset = randomInt(random.nextInt(3), random.nextInt(1+(count/15)), offset);
 
 
         return Math.abs(offset);
