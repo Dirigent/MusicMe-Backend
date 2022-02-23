@@ -19,6 +19,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.Random;
 
+// TODO: formatovani
 
 public class UserCreator {
     Random random = new Random();
@@ -26,39 +27,38 @@ public class UserCreator {
     //Parts of the code are used under Creative Commons License from https://github.com/MicrosoftDocs/azure-docs
     @FunctionName("UserCreator")
     public HttpResponseMessage run(@HttpTrigger(name = "req", methods = {
-            HttpMethod.POST }, authLevel = AuthorizationLevel.ANONYMOUS, route = 
+            HttpMethod.POST}, authLevel = AuthorizationLevel.ANONYMOUS, route =
             "users") HttpRequestMessage<Optional<String>> request,
-            @CosmosDBOutput(name = "database",
-            databaseName = "Songs",
-            collectionName = "Users",
-            connectionStringSetting = "")
-            OutputBinding<String> outputItem,
-            final ExecutionContext context) {
+                                   @CosmosDBOutput(name = "database",
+                                           databaseName = "Songs",
+                                           collectionName = "Users",
+                                           connectionStringSetting = "")
+                                           OutputBinding<String> outputItem,
+                                   final ExecutionContext context) {
         ObjectMapper mapper = new ObjectMapper();
-        TypeReference<HashMap<String,Object>> typeRef 
-            = new TypeReference<HashMap<String,Object>>() {};
+        // TODO: deklarovat az je potreba
+        //TypeReference<HashMap<String, Object>> typeRef = new TypeReference<HashMap<String, Object>>() {};
 
-            
-            
-            if (request.getBody().get() == null) {
-                return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body("Please pass a name on the query string or in the request body").build();
-            } else {
-                try {
-                    HashMap<String, Object> map = mapper.readValue(request.getBody().get(), typeRef);
-                    map.put("groupId", random.nextInt(20000));
-                    map.put("id", UUID.randomUUID().toString());
-                    String document = mapper.writeValueAsString(map);
-                    outputItem.setValue(document);
-                    return request.createResponseBuilder(HttpStatus.OK).body(document).build();
-                } catch (JsonProcessingException e) {
-                    e.printStackTrace();
-                    return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body("Please pass a name on the query string or in the request body").build();
-                }
-               
+        // TODO: toto je zbytecna podminka, nemuze byt nikdy null
+        if (request.getBody().get() == null) {
+            return request.createResponseBuilder(HttpStatus.BAD_REQUEST)
+                    .body("Please pass a name on the query string or in the request body")
+                    .build();
+        } else {
+            try {
+                TypeReference<HashMap<String, Object>> typeRef = new TypeReference<HashMap<String, Object>>() {};
+                HashMap<String, Object> map = mapper.readValue(request.getBody().get(), typeRef);
+                map.put("groupId", random.nextInt(20_000));
+                map.put("id", UUID.randomUUID().toString());
+                String document = mapper.writeValueAsString(map);
+                outputItem.setValue(document);
+                return request.createResponseBuilder(HttpStatus.OK).body(document).build();
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                return request.createResponseBuilder(HttpStatus.BAD_REQUEST)
+                        .body("Please pass a name on the query string or in the request body")
+                        .build();
             }
-
-
-
-
+        }
     }
 }

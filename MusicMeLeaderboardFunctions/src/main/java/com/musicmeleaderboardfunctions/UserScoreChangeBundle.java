@@ -4,8 +4,9 @@ import java.util.List;
 
 
 public class UserScoreChangeBundle {
-    private boolean changed;
-    private List<UserScore> scores;
+    // TODO: pouzit final
+    private final boolean changed;
+    private final List<UserScore> scores;
 
     public UserScoreChangeBundle(boolean changed, List<UserScore> scores){
         this.changed = changed;

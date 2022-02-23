@@ -4,6 +4,7 @@ import com.azure.cosmos.ConsistencyLevel;
 import com.azure.cosmos.CosmosClient;
 import com.azure.cosmos.CosmosClientBuilder;
 
+// TODO: duplikat
 public final class ClientSingleton {
     //Follows singleton pattern to reuse connection to CosmosDB when needed.
     private static volatile ClientSingleton INSTANCE = null;

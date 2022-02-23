@@ -24,13 +24,15 @@ import java.util.Optional;
  */
 public class LeaderboardReader {
 
-    CosmosClient client = ClientSingleton.getInstance().getClient();
-    CosmosDatabase cosmosDatabase = client.getDatabase("Songs");
-    CosmosContainer container = cosmosDatabase.getContainer("HighScores");
+    // TODO: pravdepodobne private a final budou ok
+    private final CosmosClient client = ClientSingleton.getInstance().getClient();
+    private final CosmosDatabase cosmosDatabase = client.getDatabase("Songs");
+    private final CosmosContainer container = cosmosDatabase.getContainer("HighScores");
 
     @FunctionName("LeaderboardReader")
-    public HttpResponseMessage run(@HttpTrigger(name = "req", methods = {
-            HttpMethod.GET }, authLevel = AuthorizationLevel.ANONYMOUS, route = "leaderboards/{id}") HttpRequestMessage<Optional<String>> request,
+    public HttpResponseMessage run(
+            @HttpTrigger(name = "req", methods = {
+                    HttpMethod.GET}, authLevel = AuthorizationLevel.ANONYMOUS, route = "leaderboards/{id}") HttpRequestMessage<Optional<String>> request,
             @BindingName("id") String id, final ExecutionContext context) {
         context.getLogger().info("Java HTTP trigger processed a request.");
         ObjectMapper mapper = new ObjectMapper();
@@ -39,16 +41,17 @@ public class LeaderboardReader {
         if (node != null) {
             Leaderboard leaderboard = new Leaderboard(node.get("id").asText(), Utilities.jsonNodeToList(node));
             try {
-                return request.createResponseBuilder(HttpStatus.OK).body(mapper.writeValueAsString(leaderboard))
+                return request.createResponseBuilder(HttpStatus.OK)
+                        .body(mapper.writeValueAsString(leaderboard))
                         .build();
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
-                return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body("Bad Request").build();
+                return request.createResponseBuilder(HttpStatus.BAD_REQUEST)
+                        .body("Bad Request")
+                        .build();
             }
         } else {
             return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body("Bad Request").build();
         }
-                
-        
     }
 }

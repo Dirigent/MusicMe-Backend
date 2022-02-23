@@ -4,6 +4,7 @@ import com.azure.cosmos.ConsistencyLevel;
 import com.azure.cosmos.CosmosClient;
 import com.azure.cosmos.CosmosClientBuilder;
 
+// Duplikat
 public final class ClientSingleton {
     private static volatile ClientSingleton INSTANCE = null;
     private ClientSingleton(){}

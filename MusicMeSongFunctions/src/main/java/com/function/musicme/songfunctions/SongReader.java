@@ -34,60 +34,60 @@ import java.util.Random;
  * Azure Functions with HTTP Trigger.
  */
 public class SongReader {
-    private CosmosClient client = ClientSingleton.getInstance().getClient();
-    private CosmosDatabase cosmosDatabase = client.getDatabase("Songs");
-    private CosmosContainer container = cosmosDatabase.getContainer("songs");
-    private Random rand = new Random();
+    // TODO: final
+    private final CosmosClient client = ClientSingleton.getInstance().getClient();
+    private final CosmosDatabase cosmosDatabase = client.getDatabase("Songs");
+    private final CosmosContainer container = cosmosDatabase.getContainer("songs");
+    private final Random rand = new Random();
 
     @FunctionName("SongReader")
     public HttpResponseMessage run(
             @HttpTrigger(
-                name = "req",
-                methods = {HttpMethod.GET},
-                authLevel = AuthorizationLevel.ANONYMOUS,
-                route = "songs")
-            
-                HttpRequestMessage<Optional<String>> request,
+                    name = "req",
+                    methods = {HttpMethod.GET},
+                    authLevel = AuthorizationLevel.ANONYMOUS,
+                    route = "songs")
+
+                    HttpRequestMessage<Optional<String>> request,
             final ExecutionContext context) {
-                ObjectMapper objectMapper = Utils.getSimpleObjectMapper();
-                int limit = 20;
-                int stage = 0;
-            
-                CosmosQueryRequestOptions queryRequestOptions = new CosmosQueryRequestOptions();
-    
-                Map<String, String> params = new HashMap<>();
-                if(request.getQueryParameters().isEmpty()) {
-                    return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body("BAD REQUEST").build();
-                }
-                params.putAll((Map<String, String>) request.getQueryParameters());
+        ObjectMapper objectMapper = Utils.getSimpleObjectMapper();
+        int limit = 20;
+        int stage = 0;
 
-                if(params.containsKey("genre")){
-                    queryRequestOptions.setPartitionKey(new PartitionKey(params.get("genre")));
-                    params.remove("genre");
-                }
+        CosmosQueryRequestOptions queryRequestOptions = new CosmosQueryRequestOptions();
 
-                stage = this.removeParam(params, QueryUtilities.QUERY_PARAM_STAGE, stage);
-                limit = this.removeParam(params, QueryUtilities.QUERY_PARAM_LIMIT, limit);
-    
-                SqlQuerySpec specs = this.buildQuery(params);
-                int count = QueryUtilities.getCount(queryRequestOptions, container, specs);
-    
-                stage = this.findStage(stage, count, limit);
-    
-                specs = this.setSqlQuerySpecText(specs, stage, limit, count);
+        if (request.getQueryParameters().isEmpty()) {
+            return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body("BAD REQUEST").build();
+        }
+        Map<String, String> params = new HashMap<>(request.getQueryParameters());
 
-               List<JsonNode> songs = QueryUtilities.queryCollection(specs, container, queryRequestOptions);
-        
-                try {
-                    return request.createResponseBuilder(HttpStatus.OK).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Credentials", "true").body(objectMapper.writeValueAsString(songs)).build();
-                } catch (JsonProcessingException e) {
-                    e.printStackTrace();
-                    return request.createResponseBuilder(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal server error").build();
-                } 
-        
+        if (params.containsKey("genre")) {
+            queryRequestOptions.setPartitionKey(new PartitionKey(params.get("genre")));
+            params.remove("genre");
+        }
+
+        stage = this.removeParam(params, QueryUtilities.QUERY_PARAM_STAGE, stage);
+        limit = this.removeParam(params, QueryUtilities.QUERY_PARAM_LIMIT, limit);
+
+        SqlQuerySpec specs = this.buildQuery(params);
+        int count = QueryUtilities.getCount(queryRequestOptions, container, specs);
+
+        stage = this.findStage(stage, count, limit);
+
+        specs = this.setSqlQuerySpecText(specs, stage, limit, count);
+
+        List<JsonNode> songs = QueryUtilities.queryCollection(specs, container, queryRequestOptions);
+
+        try {
+            return request.createResponseBuilder(HttpStatus.OK).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Credentials", "true").body(objectMapper.writeValueAsString(songs)).build();
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return request.createResponseBuilder(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal server error").build();
+        }
     }
+
     //Builds query string and ads sql parameters to prepared statement
-    private SqlQuerySpec setSqlQuerySpecText(SqlQuerySpec specs,int stage,int limit, int count){
+    private SqlQuerySpec setSqlQuerySpecText(SqlQuerySpec specs, int stage, int limit, int count) {
         int offset = 0;
         if ((stage * limit) > (count / 2)) {
             offset = Utilities.calculateOppositeOffset(stage, count, limit);
@@ -102,61 +102,71 @@ public class SongReader {
         }
         return specs;
     }
+
     //Calculates maximum stages if a user has a higher stage a random stage is selected
-    private int findStage(int stage, int count, int limit){
+    private int findStage(int stage, int count, int limit) {
         int maxStages = (count / limit);
         if (stage >= maxStages) {
-            return rand.nextInt(maxStages+1);
+            return rand.nextInt(maxStages + 1);
         } else {
             return stage;
         }
     }
-  
+
     //builds query by cheching if query parameters are appropriate
-    private SqlQuerySpec buildQuery(Map<String, String> params){
+    private SqlQuerySpec buildQuery(Map<String, String> params) {
         List<SqlParameter> parameters = new ArrayList<>();
+        // TODO: zvazil bych pouziti QueryBuilderu
         String query = "";
         Object[] keys = params.keySet().toArray();
-        for(int i = 0; i < params.size(); i++){
+        for (int i = 0; i < params.size(); i++) {
             String parameter = (String) keys[i];
-            if(parameter.equals(QueryUtilities.QUERY_PARAM_ARTIST)){
-                query += queryOperators(i)+ QueryUtilities.QUERY_START +  parameter + " = @" + parameter;
-                parameters.add(new SqlParameter("@"+parameter, params.get(parameter)));
-            } else if (parameter.equals(QueryUtilities.QUERY_PARAM_DECADE) || parameter.equals(QueryUtilities.QUERY_PARAM_CENTURY)){
-                query += queryOperators(i)+ QueryUtilities.QUERY_START_TIME +  parameter + " = @" + parameter;
-                parameters.add(new SqlParameter("@"+parameter, params.get(parameter)));
-            } else if (parameter.equals(QueryUtilities.QUERY_PARAM_YEAR)){
-                query += queryOperators(i)+QueryUtilities.QUERY_START_TIME +  parameter + " = @" + parameter;
-                parameters.add(new SqlParameter("@"+parameter, Integer.parseInt(params.get(parameter))));
-            } else if (parameter.equals(QueryUtilities.QUERY_PARAM_GENDER)){
-                query += queryOperators(i)+QueryUtilities.QUERY_START +  parameter + " = @" + parameter;
-                parameters.add(new SqlParameter("@"+parameter, params.get(parameter)));
-            } else if (parameter.equals(QueryUtilities.QUERY_PARAM_AUDIENCE)){
-                query += queryOperators(i)+QueryUtilities.QUERY_START +  parameter + " = @" + parameter;
-                parameters.add(new SqlParameter("@"+parameter, params.get(parameter)));
-            } 
-            
+            switch (parameter) {
+                case QueryUtilities.QUERY_PARAM_ARTIST:
+                    query += queryOperators(i) + QueryUtilities.QUERY_START + parameter + " = @" + parameter;
+                    parameters.add(new SqlParameter("@" + parameter, params.get(parameter)));
+                    break;
+                case QueryUtilities.QUERY_PARAM_DECADE:
+                case QueryUtilities.QUERY_PARAM_CENTURY:
+                    query += queryOperators(i) + QueryUtilities.QUERY_START_TIME + parameter + " = @" + parameter;
+                    parameters.add(new SqlParameter("@" + parameter, params.get(parameter)));
+                    break;
+                case QueryUtilities.QUERY_PARAM_YEAR:
+                    query += queryOperators(i) + QueryUtilities.QUERY_START_TIME + parameter + " = @" + parameter;
+                    parameters.add(new SqlParameter("@" + parameter, Integer.parseInt(params.get(parameter))));
+                    break;
+                case QueryUtilities.QUERY_PARAM_GENDER:
+                    query += queryOperators(i) + QueryUtilities.QUERY_START + parameter + " = @" + parameter;
+                    parameters.add(new SqlParameter("@" + parameter, params.get(parameter)));
+                    break;
+                case QueryUtilities.QUERY_PARAM_AUDIENCE:
+                    query += queryOperators(i) + QueryUtilities.QUERY_START + parameter + " = @" + parameter;
+                    parameters.add(new SqlParameter("@" + parameter, params.get(parameter)));
+                    break;
+            }
+
         }
-        SqlQuerySpec querySpec = new SqlQuerySpec(query, parameters);
-        
-        return querySpec;
+        return new SqlQuerySpec(query, parameters);
     }
-    //returns query operators based on the currrent loop iteration 
-    private String queryOperators(int i){
-        if(i == 0){
-            return " WHERE";
-        } else {
-            return " AND";
-        }
+
+    //returns query operators based on the currrent loop iteration
+    private String queryOperators(int i) {
+//        if (i == 0) {
+//            return " WHERE";
+//        } else {
+//            return " AND";
+//        }
+        // TODO: lepe takto
+        return i == 0 ? " WHERE" : " AND";
     }
+
     // removes parameter and returns the value of the parameter if it is present
-    private int removeParam(Map<String, String> params, String key, int num){
-        if(params.containsKey(key)){
+    private int removeParam(Map<String, String> params, String key, int num) {
+        // TODO: lepe takto
+        if (params.containsKey(key)) {
             num = Integer.parseInt(params.get(key));
             params.remove(key);
-            return num;
-        } else {
-            return num;
         }
+        return num;
     }
 }

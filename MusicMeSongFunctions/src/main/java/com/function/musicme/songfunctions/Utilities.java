@@ -4,17 +4,16 @@ import java.util.Random;
 
 public class Utilities {
 
-
     //Calculates offset of songs in descending order
     public static int calculateOffset(int stage, int count, int limit) {
         Random random = new Random();
         int offset = stage * 10;
 
         offset = randomInt(random.nextInt(3), random.nextInt(1+(count/15)), offset);
- 
 
         return Math.abs(offset);
     }
+
     //Calculates offset of songs in ascending order
     public static  int calculateOppositeOffset(int stage, int count, int limit) {
         Random random = new Random();
@@ -25,7 +24,6 @@ public class Utilities {
         }
 
         offset = randomInt(random.nextInt(3), random.nextInt(1+(count/15)), offset);
-
 
         return Math.abs(offset);
     } 

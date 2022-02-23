@@ -14,7 +14,7 @@ import java.util.List;
 
 public class QueryUtilities {
     //Prepared statements
-    public static final String ASC_QUERY = "SELECT DISTINCT {\"name\": c.name, \"artist\": c.artist} AS song FROM c ORDER BY c.pi ASC OFFSET @offset LIMIT @limit";
+    //public static final String ASC_QUERY = "SELECT DISTINCT {\"name\": c.name, \"artist\": c.artist} AS song FROM c ORDER BY c.pi ASC OFFSET @offset LIMIT @limit";
     public static final String DESC_QUERY = "SELECT DISTINCT {\"name\": c.name , \"artist\": c.artist} AS song FROM c ORDER BY c.pi DESC OFFSET @offset LIMIT @limit";
     public static final String BASE_READ_QUERY = "SELECT DISTINCT {\"name\": c.name , \"artist\": c.artist} AS song FROM c";
     public static final String DESC_ENDING = " ORDER BY c.pi DESC OFFSET @offset LIMIT @limit";
@@ -37,8 +37,7 @@ public class QueryUtilities {
         List<JsonNode> songs = new ArrayList<JsonNode>();
         requestOptions.setMaxBufferedItemCount(8);
 
-        CosmosPagedIterable<JsonNode> pagedIterable = container.queryItems(querySpec, requestOptions,
-            JsonNode.class);
+        CosmosPagedIterable<JsonNode> pagedIterable = container.queryItems(querySpec, requestOptions, JsonNode.class);
         for (FeedResponse<JsonNode> pageResponse : pagedIterable.iterableByPage()) {
             for (JsonNode item : pageResponse.getElements()) {
                 songs.add(item);
@@ -51,10 +50,7 @@ public class QueryUtilities {
     //Creates Query specs (Ads query string and params to SqlQuerySpec class)
     public static SqlQuerySpec buildQuerySpecs(int offset, int limit, String query) {
         SqlParameter[] parameters = { new SqlParameter("@offset", offset), new SqlParameter("@limit", limit) };
-
-        SqlQuerySpec querySpec = new SqlQuerySpec(query, parameters);
-        return querySpec;
-
+        return new SqlQuerySpec(query, parameters);
     }
 
     //Finds count of query so that level calculation can be performed later
@@ -71,12 +67,17 @@ public class QueryUtilities {
             }
 
         return count;
-
     }
+
     //Retrieves Songs from database. To determine which songs too select proportion of Easy songs (high popularity index and hard songs (low popularity index) are calculated) 
-    public static List<JsonNode> getSongs(int numOfLevels, int limit, int level, int count, CosmosQueryRequestOptions requestOptions, CosmosContainer container, String query1, String query2){
-        Double proportionHard = ((double)level/(double)numOfLevels);
-        Double proportionEasy = 1-proportionHard;  
+    public static List<JsonNode> getSongs(
+            int numOfLevels,
+            int limit,
+            int level,
+            int count,
+            CosmosQueryRequestOptions requestOptions, CosmosContainer container, String query1, String query2) {
+        double proportionHard = ((double)level/(double)numOfLevels);
+        double proportionEasy = 1-proportionHard;
         int[] limits = calculateLimit(proportionHard, proportionEasy, limit);
 
         int hardLimit = limits[0];
@@ -103,15 +104,15 @@ public class QueryUtilities {
         }
 
         return songs;
-
     }
+
     //caluclates how many easy and hard songs are to be retrieved
     public static int[] calculateLimit(Double proportionHard, Double proportionEasy, int limit) {
         int[] limits = new int[2];
         
         if(proportionHard > 1) {
-            proportionHard = 1.0;
-            proportionEasy = 0.0;
+            proportionHard = 1.0d;
+            proportionEasy = 0.0d;
         }
         
         int hardLimit = (int)(limit*proportionHard);

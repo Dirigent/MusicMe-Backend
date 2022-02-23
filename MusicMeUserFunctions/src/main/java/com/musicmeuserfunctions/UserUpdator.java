@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-
 import com.azure.cosmos.CosmosClient;
 import com.azure.cosmos.CosmosContainer;
 import com.azure.cosmos.CosmosDatabase;
@@ -26,10 +25,11 @@ import com.microsoft.azure.functions.annotation.HttpTrigger;
 import java.util.Optional;
 
 public class UserUpdator {
-    private CosmosClient client = ClientSingleton.getInstance().getClient();
-    private CosmosDatabase cosmosDatabase = client.getDatabase("Songs");
-    private CosmosContainer container = cosmosDatabase.getContainer("Users");
-    ObjectMapper mapper = new ObjectMapper();
+    // TODO: final
+    private final CosmosClient client = ClientSingleton.getInstance().getClient();
+    private final CosmosDatabase cosmosDatabase = client.getDatabase("Songs");
+    private final CosmosContainer container = cosmosDatabase.getContainer("Users");
+    private final ObjectMapper mapper = new ObjectMapper();
     
     //Parts of the code are used under Creative Commons License from https://github.com/MicrosoftDocs/azure-docs
     @FunctionName("UserUpdator")
@@ -57,23 +57,23 @@ public class UserUpdator {
                         .body("Failed to Process").build();
             } 
         }
-
     }
+
     /*Checks if new values are already present and if they are ann array or singular, 
     if they are an array, the array is extended otherwise the value is replaced */
     @SuppressWarnings("unchecked")
     private HashMap<String, Object> populateMap(HashMap<String, Object> newAtts, HashMap<String, Object> map) {
-        Object[] keySet = newAtts.keySet().toArray();
-        for(int i = 0; i < keySet.length; i++){
-            if(map.containsKey(keySet[i]) && map.get(keySet[i]) instanceof List<?>){
-                List<Object> newList = new ArrayList<>();
-                newList = (List<Object>) newAtts.get(keySet[i]);
-                newList.addAll((List<Object>) map.get(keySet[i]));
-                map.replace(keySet[i].toString(), newList);
+        // TODO: pokud to jde, pouzivat List misto array
+        List<String> keyList = new ArrayList<>(newAtts.keySet());
+        for (String key : keyList) {
+            if (map.containsKey(key) && map.get(key) instanceof List<?>) {
+                List<Object> newList = (List<Object>) newAtts.get(key);
+                newList.addAll((List<Object>) map.get(key));
+                map.replace(key, newList);
             } else {
-                map.replace(keySet[i].toString(), newAtts.get(keySet[i]));
+                map.replace(key, newAtts.get(key));
             }
-            newAtts.remove(keySet[i].toString());
+            newAtts.remove(key);
         } 
         map.putAll(newAtts);
         return map;
